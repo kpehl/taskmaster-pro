@@ -131,6 +131,56 @@ $(".list-group").on("blur", "input[type='text']", function() {
 });
 
 
+// jQueryUI to make the task lists sortable and connected
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false,
+  tolerance: "pointer",
+  helper: "clone",
+  activate: function(event) {
+    console.log("activate", this);
+  },
+  deactivate: function(event) {
+    console.log("deactivate", this);
+  },
+  over: function(event) {
+    console.log("over", this);
+  },
+  out: function(event) {
+    console.log("out", this);
+  },
+  // when a task is updated, i.e. order changes or the task status changes
+  update: function(event) {
+    // define a temporary array
+    var tempArr = [];
+    // loop over the current set of children in the sortable list and get the task description and due date
+    $(this).children().each(function() {
+      var text = $(this)
+        .find("p")
+        .text()
+        .trim();
+    
+      var date = $(this)
+        .find("span")
+        .text()
+        .trim();
+
+      // add the task data to the temporary array as an object
+      tempArr.push({
+        text: text,
+        date: date
+      });
+    });
+    // trim down list's id to match the object property
+    var arrName = $(this)
+      .attr("id")
+      .replace("list-", "");
+    // update the array on the tasks object and save
+    tasks[arrName] = tempArr;
+    saveTasks();
+  }
+});
+
 
 
 // modal was triggered
