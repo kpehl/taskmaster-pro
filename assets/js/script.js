@@ -13,6 +13,8 @@ var createTask = function(taskText, taskDate, taskList) {
   // append span and p element to parent li
   taskLi.append(taskSpan, taskP);
 
+  // check the due date
+  auditTask(taskLi);
 
   // append to ul list on the page
   $("#list-" + taskList).append(taskLi);
@@ -45,6 +47,24 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
+var auditTask = function(taskEl) {
+  // get date from the task element
+  var date = $(taskEl).find("span").text().trim();
+
+  // convert to a moment object at 5:00 pm, i.e. at the typical close of the business day
+  var time = moment(date, "L").set("hour", 17);
+
+  // remove any old classes from the element
+  $(taskEl).removeClass("list-group-item-warning list-group-item-danger");
+
+  // apply a new class if the task is near or over the due date
+  if (moment().isAfter(time)) {
+    $(taskEl).addClass("list-group-item-danger");
+  }
+  else if (Math.abs(moment().diff(time, "days")) <= 2) {
+    $(taskEl).addClass("list-group-item-warning");
+  }
+}
 
 // edit tasks
 // edit task description
@@ -136,6 +156,8 @@ $(".list-group").on("change", "input[type='text']", function() {
     .text(date);
   // replace the input with the new span element
   $(this).replaceWith(taskSpan);
+  // pass the li to auditTask() to check the new due date
+  auditTask($(taskSpan).closest(".list-group-item"));
 });
 
 
