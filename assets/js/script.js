@@ -149,7 +149,7 @@ $(".list-group").on("change", "input[type='text']", function() {
   // update the task in the array and re-save to localStorage
   tasks[status][index].date = date;
   saveTasks();
-  // recreate the span element with a bootsrap class
+  // recreate the span element with a bootstrap class
   var taskSpan = $("<span>")
     .addClass("badge badge-primary badge-pill")
     .text(date);
@@ -166,17 +166,23 @@ $(".card .list-group").sortable({
   scroll: false,
   tolerance: "pointer",
   helper: "clone",
-  activate: function(event) {
+  activate: function(event, ui) {
     console.log("activate", this);
+    $(this).addClass("dropover");
+    $(".bottom-trash").addClass("bottom-trash-drag")
   },
-  deactivate: function(event) {
+  deactivate: function(event, ui) {
     console.log("deactivate", this);
+    $(this).removeClass("dropover");
+    $(".bottom-trash").removeClass("bottom-trash-drag")
   },
-  over: function(event) {
+  over: function(event, ui) {
     console.log("over", this);
+    $(this).addClass("dropover-active");
   },
-  out: function(event) {
+  out: function(event, ui) {
     console.log("out", this);
+    $(this).removeClass("dropover-active");
   },
   // when a task is updated, i.e. order changes or the task status changes
   update: function(event) {
@@ -220,9 +226,11 @@ $("#trash").droppable({
   },
   over: function(event, ui) {
     console.log("over");
+    $(this).addClass("bottom-trash-active")
   },
   out: function(event, ui) {
     console.log("out");
+    $(this).removeClass("bottom-trash-active")
   },
 });
 
